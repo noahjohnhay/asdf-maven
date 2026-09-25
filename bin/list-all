@@ -1,18 +1,8 @@
 #!/usr/bin/env bash
 
-get_maven_versions() {
-  # super clumsy regex to locate all Maven version tags on their history page
-  version=".*<td>(<b>)?([0-9]\.[0-9](\.[0-9])?(-.*)?)(</b>)?</td>.*"
+set -euo pipefail
 
-  # iterate all lines coming back from the Maven release history
-  for line in $(curl -s https://maven.apache.org/docs/history.html); do
-    [[ $line =~ $version ]] && echo ${BASH_REMATCH[2]}
-  done
+# shellcheck source=../lib/utils.bash
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.bash"
 
-  snapshot_version="[0-9].*-SNAPSHOT"
-  for line in $(curl -s https://repository.apache.org/content/repositories/snapshots/org/apache/maven/apache-maven/maven-metadata.xml); do
-    [[ $line =~ $snapshot_version ]] && echo ${BASH_REMATCH[0]}
-  done
-}
-
-get_maven_versions | sort -u | tr "\n" " "
+list_maven_versions | tr '\n' ' '
